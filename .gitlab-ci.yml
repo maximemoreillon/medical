@@ -1,0 +1,28 @@
+stages:
+  - containerization
+  - deploy
+
+variables:
+  APPLICATION_NAME: medical
+  DOCKER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+  CERTIFICATE_DOMAIN: api.medical.maximemoreillon.com
+
+
+containerization:
+  stage: containerization
+  script:
+    - cp ${ENV} ./.env
+    - echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin
+    - docker build -t ${DOCKER_IMAGE} .
+    - docker push ${DOCKER_IMAGE}
+    - docker image rm ${DOCKER_IMAGE}
+
+deployment:
+  stage: deploy
+  script:
+    - envsubst < deployment.yml | kubectl apply -f -
+    - kubectl rollout restart deployment/${APPLICATION_NAME}
+  environment:
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}
