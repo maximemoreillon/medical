@@ -11,12 +11,12 @@ exports.blood_pressure_measurement = 'blood_pressure'
 
 exports.influx = new Influx.InfluxDB({
   host: process.env.INFLUX_URL,
-  database: DB_name,
+  database: exports.DB_name,
 })
 
 // Create DB if not exists
-influx.getDatabaseNames()
+exports.influx.getDatabaseNames()
 .then(names => {
-  if (!names.includes(DB_name)) return influx.createDatabase(DB_name)
+  if (!names.includes(exports.DB_name)) return exports.influx.createDatabase(exports.DB_name)
 })
 .catch(err => { console.error(`Error creating Influx database! ${err}`) })
