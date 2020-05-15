@@ -10,7 +10,7 @@ exports.blood_pressure_measurement = 'blood_pressure'
 
 
 exports.influx = new Influx.InfluxDB({
-  host: process.env.INFLUX_URL,
+  host: process.env.INFLUXDB_URL,
   database: exports.DB_name,
 })
 
