@@ -26,6 +26,9 @@ app.use(cors());
 
 
 // Express routes
+app.get('/', (req, res) => {
+  res.send('Medical API v1.0.0, Maxime MOREILLON')
+})
 
 // Weight related routes
 app.post('/weight/register', weight_management.register_weight)
