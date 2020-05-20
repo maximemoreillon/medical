@@ -5,7 +5,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const authorization_middleware = require('@moreillon/authorization_middleware')
 
-dotenv.config();
+dotenv.config()
 
 var port = 80
 if(process.env.APP_PORT) port=process.env.APP_PORT
@@ -19,9 +19,9 @@ process.env.TZ = 'Asia/Tokyo';
 
 authorization_middleware.authentication_api_url = `${process.env.AUTHENTIATION_API_URL}/decode_jwt`
 
-var app = express();
-app.use(bodyParser.json());
-app.use(cors());
+var app = express()
+app.use(bodyParser.json())
+app.use(cors())
 //app.use(authorization_middleware.middleware);
 
 
