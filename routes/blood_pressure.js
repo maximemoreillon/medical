@@ -1,8 +1,11 @@
-const database_config = require('./database_config.js')
+const express = require('express')
+const database_config = require('../database_config.js')
+
+const router = express.Router()
 
 const measurement_name = 'blood_pressure'
 
-exports.register_blood_pressure = (req,res) => {
+let register_blood_pressure = (req,res) => {
 
   // Input sanitation
   if( !('systolic_pressure' in req.body) ) return res.status(400).send('systolic_pressure is not present in request body')
@@ -29,15 +32,23 @@ exports.register_blood_pressure = (req,res) => {
   })
 }
 
-exports.get_blood_pressure_history = (req,res) => {
-  console.log(`Requested bloob pressure history`)
+let get_blood_pressure_history = (req,res) => {
   database_config.influx.query(`select * from ${measurement_name}`)
   .then( result => res.send(result) )
   .catch( error => res.status(500).send(`Error getting weight from Influx: ${error}`) )
 }
 
-exports.get_current_blood_pressure = (req,res) => {
+let get_current_blood_pressure = (req,res) => {
   database_config.influx.query(`select * from ${measurement_name} GROUP BY * ORDER BY DESC LIMIT 1`)
   .then( result => { res.send(result[0]) } )
   .catch( error => res.status(500).send(`Error getting weight from Influx: ${error}`) )
 }
+
+router.route('/')
+  .post(register_blood_pressure)
+router.route('/current')
+  .get(get_current_blood_pressure)
+router.route('/history')
+  .get(get_blood_pressure_history)
+
+module.exports = router

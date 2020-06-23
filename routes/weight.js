@@ -1,9 +1,12 @@
-const database_config = require('./database_config.js')
+const express = require('express')
+const database_config = require('../database_config.js')
+
+const router = express.Router()
 
 const measurement_name = 'weight'
 
 
-exports.register_weight = (req,res) => {
+let register_weight = (req,res) => {
 
   if( !('weight' in req.body) ) return res.status(400).send('weight is not present in request body')
 
@@ -23,7 +26,7 @@ exports.register_weight = (req,res) => {
   })
 }
 
-exports.get_weight_history = (req,res) => {
+let get_weight_history = (req,res) => {
   database_config.influx.query(`select * from ${measurement_name}`)
   .then( result => res.send(result) )
   .catch( error => {
@@ -32,7 +35,7 @@ exports.get_weight_history = (req,res) => {
   })
 }
 
-exports.get_current_weight = (req,res) => {
+let get_current_weight = (req,res) => {
   database_config.influx.query(`select * from ${measurement_name} GROUP BY * ORDER BY DESC LIMIT 1`)
   .then( result => { res.send(result[0]) } )
   .catch( error => {
@@ -40,3 +43,12 @@ exports.get_current_weight = (req,res) => {
     res.status(500).send(`Error getting weight from Influx: ${error}`)
   })
 }
+
+router.route('/')
+  .post(register_weight)
+router.route('/current')
+  .get(get_current_weight)
+router.route('/history')
+  .get(get_weight_history)
+
+module.exports = router

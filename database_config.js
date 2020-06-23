@@ -5,8 +5,6 @@ dotenv.config();
 
 
 exports.DB_name = 'medical'
-exports.weight_measurement = 'weight'
-exports.blood_pressure_measurement = 'blood_pressure'
 
 
 exports.influx = new Influx.InfluxDB({
